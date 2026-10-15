@@ -53,12 +53,22 @@ export function initDesktopControls({
 
   function onKeyDown(event) {
     if (!active) return;
+
     if (event.code === "Escape") {
       onExit();
       return;
     }
+
     if (event.code === "Enter" && !event.repeat) {
       onPlayAgain();
+      return;
+    }
+
+    // MEMUNCULKAN KURSOR: Tekan Left Control untuk melepas pointer lock
+    if (event.code === "ControlLeft") {
+      if (document.pointerLockElement === canvas) {
+        document.exitPointerLock();
+      }
       return;
     }
 
@@ -66,6 +76,7 @@ export function initDesktopControls({
     if (event.code === "KeyJ" && !event.repeat) {
       onPunch("left");
     }
+
     if (event.code === "KeyK" && !event.repeat) {
       onPunch("right");
     }

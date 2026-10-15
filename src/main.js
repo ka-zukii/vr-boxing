@@ -396,7 +396,28 @@ gameOver = initGameOver({
       startGame(game);
     }
   },
-  onHome: () => exitVR(renderer),
+  onHome: () => {
+    // Jika sedang pakai VR, keluar dari VR
+    if (renderer.xr.isPresenting) {
+      exitVR(renderer).catch((err) => console.warn(err));
+    } else {
+      // Jika pakai Desktop, jalankan prosedur pembersihan seperti saat menekan Escape
+      if (game.mode === "MULTI") multiplayer.leaveRoom();
+      desktopControls.stop();
+      game.desktopActive = false;
+      setGlovesVisible(true);
+      game.state = GAME_STATES.MENU;
+      game.roomCode = "";
+      game.playerNumber = 0;
+      ui?.setRoomState({ roomCode: "", players: 0, playerNumber: 0 });
+      ui?.setRoomStatus("Returned to main menu.");
+      hud.show(false);
+      hud.showCountdown(false);
+      hud.showLoading(false);
+      gameOver.hide();
+      ui?.showStartScreen();
+    }
+  },
 });
 game.gameOverDisplay = gameOver;
 game.showGameOver = (score, hits, misses, perfects, bestCombo) => {
